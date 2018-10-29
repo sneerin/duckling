@@ -1,0 +1,26 @@
+
+env:
+  PORT: 80
+
+replicaCount: 1
+
+image:
+  repository: gcr.io/env-flowai/github-flow-ai-duckling
+  tag: bbe145f97e0ae68a4727f2dfd4121960a6dad885
+  pullPolicy: Always
+
+service:
+  type: ClusterIP
+
+ingress:
+  enabled: true
+  annotations: 
+    kubernetes.io/ingress.class: "app"
+    nginx.ingress.kubernetes.io/ssl-redirect: false
+    nginx.ingress.kubernetes.io/rewrite-target: "/"
+  path: /duckling
+  host: app-dev.flow.ai
+#  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local

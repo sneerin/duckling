@@ -1,0 +1,4 @@
+env:
+  PAPERTRAIL_API_TOKEN: 1uUT1MUwBu2J3kVwXT0C
+ingress:
+  host: app.flow.ai
