@@ -1,0 +1,16 @@
+steps:
+- name: 'busybox'
+  args: ['mkdir', './charts']
+- name: 'gcr.io/cloud-builders/gsutil'
+  args: ['cp', '-r', 'gs://flowai-chart-${_ENV}', './charts'] 
+- name: 'gcr.io/$PROJECT_ID/helm'
+#replace <appname>-haskell with your app name
+  args: ['upgrade','--install', 'duckling-haskell',
+  './charts/flowai-chart-${_ENV}/haskell','--set',
+  'image.tag=v$TAG_NAME','-f','./helm/haskell/values.yaml',
+  '-f','./helm/haskell/values-$_ENV.yaml']
+  env:
+  - 'CLOUDSDK_COMPUTE_ZONE=europe-west1-b'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=flow-env-${_ENV}'
+substitutions:
+    _ENV: prod

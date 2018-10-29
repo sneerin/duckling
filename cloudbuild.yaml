@@ -1,0 +1,21 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '--tag=gcr.io/$PROJECT_ID/$REPO_NAME:$COMMIT_SHA','--tag=gcr.io/$PROJECT_ID/$REPO_NAME:v$TAG_NAME', '.']
+- name: 'busybox'
+  args: ['mkdir', './charts']
+- name: 'gcr.io/cloud-builders/gsutil'
+  args: ['cp', '-r', 'gs://flowai-chart', './charts'] 
+- name: 'gcr.io/$PROJECT_ID/helm'
+  args: ['upgrade','--install', 'duckling-haskell',
+  './charts/flowai-chart/haskell','--set',
+  'image.tag=$COMMIT_SHA','-f',
+  './helm/haskell/values.yaml','-f','./helm/haskell/values-$_ENV.yaml']
+  env:
+  - 'CLOUDSDK_COMPUTE_ZONE=europe-west1-b'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=flow-env-${_ENV}'  
+substitutions:
+    _ENV: dev
+images: ['gcr.io/$PROJECT_ID/$REPO_NAME']
+timeout: 3000s
+options:
+  machineType: 'N1_HIGHCPU_8'
